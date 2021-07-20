@@ -2,10 +2,12 @@ package eun.example.sparta.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.json.JSONObject;
 
 @NoArgsConstructor // 기본 생성자를 자동으로 만듭니다.
 @Getter
+@Setter
 public class ItemDto {
     private String title;
     private String link;
