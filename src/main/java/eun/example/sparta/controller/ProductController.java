@@ -2,8 +2,10 @@ package eun.example.sparta.controller;
 
 import eun.example.sparta.dto.*;
 import eun.example.sparta.model.Product;
+import eun.example.sparta.security.UserDetailsImpl;
 import eun.example.sparta.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +31,11 @@ public class ProductController {
 
     // 신규 상품 등록
     @PostMapping("/api/products")
-    public Product createProduct(@RequestBody ProductRequestDto requestDto){
-        Product product = productService.createProduct(requestDto);
+    public Product createProduct(@RequestBody ProductRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        // 로그인 되어 있는 Table의 ID
+        Long userId = userDetails.getUser().getId();
+
+        Product product = productService.createProduct(requestDto, userId);
         // 응답 보내기
         return product;
     }
