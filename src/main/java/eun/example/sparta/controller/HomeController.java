@@ -1,6 +1,7 @@
 package eun.example.sparta.controller;
 
 import eun.example.sparta.security.UserDetailsImpl;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ public class HomeController {
     }
 
     //관리자 권한 페이지
+    @Secured("ROLE_ADMIN")
     @GetMapping("/admin")
     public String admin(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         model.addAttribute("username", userDetails.getUsername());
