@@ -50,4 +50,5 @@ public class User extends Timestamped {
 
     @Column(nullable = true)
     private Long kakaoId;
+
 }

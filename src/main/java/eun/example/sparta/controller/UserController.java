@@ -24,6 +24,14 @@ public class UserController {
         return "login";
     }
 
+    @GetMapping("/user/kakao/callback")
+    public String kakaoLogin(String code) {
+        // authorizedCode: 카카오 서버로부터 받은 인가 코드
+        userService.kakaoLogin(code);
+
+        return "redirect:/";
+    }
+
     @GetMapping("/user/login/error")
     public String loginError(Model model) {
         model.addAttribute("loginError", true);
@@ -48,11 +56,4 @@ public class UserController {
         return "forbidden";
     }
 
-    @GetMapping("/user/kakao/callback")
-    public String kakaoLogin(String code) {
-        // authorizedCode: 카카오 서버로부터 받은 인가 코드
-        userService.kakaoLogin(code);
-
-        return "redirect:/";
-    }
 }
