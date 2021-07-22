@@ -92,6 +92,7 @@ class ProductIntegrationTest {
                 .filter(product -> product.getId().equals(createdProductId))
                 .findFirst()
                 .orElse(null);
+
         // 2. Order(1) 테스트에 의해 생성된 상품과 일치하는지 검증
         assertNotNull(foundProduct);
         assertEquals(userId, foundProduct.getUserId());
