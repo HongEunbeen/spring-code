@@ -30,7 +30,6 @@ public class ProductController {
     }
 
     // (관리자용) 등록된 모든 상품 목록 조회
-    // (관리자용) 등록된 모든 상품 목록 조회
     @Secured("ROLE_ADMIN")
     @GetMapping("/api/admin/products")
     public List<Product> getAllProducts() {
