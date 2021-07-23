@@ -36,7 +36,7 @@ class URLValidatorTest {
         String url = "";
         // when
         boolean isValid = URLValidator.urlValidator(url);
-        // then
+        // the
         assertFalse(isValid);
     }
 
