@@ -7,13 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class ProductService {
-
-    private static final int MIN_PRICE = 100;
+    // 멤버 변수 선언
     private final ProductRepository productRepository;
+    private static final int MIN_PRICE = 100;
 
     // 생성자: ProductService() 가 생성될 때 호출됨
     @Autowired
@@ -22,23 +25,22 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    // 회원 ID 로 등록된 모든 상품 조회
-    public List<Product> getProducts(Long userId) {
-        return productRepository.findAllByUserId(userId);
-    }
+    public Page<Product> getProducts(Long userId, int page, int size, String sortBy, boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        //페이지 객체
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productRepository.findAllByUserId(userId, pageable);
     }
 
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
-    public Product createProduct(ProductRequestDto requestDto, Long userId ) {
+    public Product createProduct(ProductRequestDto requestDto, Long userId) {
         // 요청받은 DTO 로 DB에 저장할 객체 만들기
         Product product = new Product(requestDto, userId);
         productRepository.save(product);
         return product;
     }
-
 
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
     public Product updateProduct(Long id, ProductMypriceRequestDto requestDto) {
@@ -53,8 +55,15 @@ public class ProductService {
         }
 
         product.updateMyPrice(myPrice);
-
         return product;
     }
 
+    // 모든 상품 조회 (관리자용)
+    public Page<Product> getAllProducts(int page, int size, String sortBy, boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return productRepository.findAll(pageable);
+    }
 }

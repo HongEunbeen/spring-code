@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -19,27 +20,29 @@ public class ProductController {
     // 생성자: ProductController() 가 생성될 때 호출됨
     @Autowired
     public ProductController(ProductService productService) {
+        // 멤버 변수 생성
         this.productService = productService;
     }
 
     // 로그인한 회원이 등록한 상품들 조회
     @GetMapping("/api/products")
-    public List<Product> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public Page<Product> getProducts(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         Long userId = userDetails.getUser().getId();
-        return productService.getProducts(userId);
-    }
-
-    // (관리자용) 등록된 모든 상품 목록 조회
-    @Secured("ROLE_ADMIN")
-    @GetMapping("/api/admin/products")
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+        //UI상에서는 1부터 시작
+        page = page - 1;
+        return productService.getProducts(userId, page , size, sortBy, isAsc);
     }
 
     // 신규 상품 등록
     @PostMapping("/api/products")
     public Product createProduct(@RequestBody ProductRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        // 로그인 되어 있는 Table의 ID
+        // 로그인 되어 있는 ID
         Long userId = userDetails.getUser().getId();
 
         Product product = productService.createProduct(requestDto, userId);
@@ -51,7 +54,19 @@ public class ProductController {
     @PutMapping("/api/products/{id}")
     public Long updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto) {
         Product product = productService.updateProduct(id, requestDto);
+        // 응답 보내기
         return product.getId();
     }
 
+    // (관리자용) 등록된 모든 상품 목록 조회
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/api/admin/products")
+    public Page<Product> getAllProducts(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc
+    ) {
+        return productService.getAllProducts(page , size, sortBy, isAsc);
+    }
 }
