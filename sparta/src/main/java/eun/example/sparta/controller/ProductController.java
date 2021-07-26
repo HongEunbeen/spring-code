@@ -2,6 +2,7 @@ package eun.example.sparta.controller;
 
 import eun.example.sparta.dto.*;
 import eun.example.sparta.model.Product;
+import eun.example.sparta.model.User;
 import eun.example.sparta.security.UserDetailsImpl;
 import eun.example.sparta.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 @RestController // JSON으로 데이터를 주고받음을 선언합니다.
 public class ProductController {
@@ -34,7 +33,6 @@ public class ProductController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Long userId = userDetails.getUser().getId();
-        //UI상에서는 1부터 시작
         page = page - 1;
         return productService.getProducts(userId, page , size, sortBy, isAsc);
     }
@@ -68,5 +66,16 @@ public class ProductController {
             @RequestParam("isAsc") boolean isAsc
     ) {
         return productService.getAllProducts(page , size, sortBy, isAsc);
+    }
+
+    // 상품에 폴더 추가
+    @PostMapping("/api/products/{id}/folder")
+    public Long addFolder(@PathVariable Long id,
+                          @RequestParam("folderId") Long folderId,
+                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        Product product = productService.addFolder(id, folderId, user);
+        // 응답 보내기
+        return product.getId();
     }
 }
