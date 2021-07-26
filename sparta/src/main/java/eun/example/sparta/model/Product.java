@@ -78,6 +78,7 @@ public class Product extends Timestamped {
         this.myprice = price;
     }
 
+    //Folder 자체 추가
     public void addFolder(Folder folder) {
         this.folderList.add(folder);
     }
