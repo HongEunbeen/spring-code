@@ -34,7 +34,6 @@ public class UserService {
         this.kakaoOAuth2 = kakaoOAuth2;
     }
 
-
     public User registerUser(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         // 회원 ID 중복 확인
