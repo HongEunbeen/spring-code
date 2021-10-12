@@ -61,12 +61,11 @@ public class UserController {
 
     //사용자 수정
     @PutMapping("/users/{id}")
-    public User updateUser(@PathVariable int id, @RequestBody User user){
+    public User updateUser(@PathVariable int id, @RequestBody User user) {
         User updateUser = service.updateById(id, user);
-        if(updateUser == null) {
+        if (updateUser == null) {
             throw new UserNotFoundException(String.format("ID[%s] not found", id));
         }
         return updateUser;
     }
-
 }
