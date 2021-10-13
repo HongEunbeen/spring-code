@@ -1,5 +1,8 @@
 package com.example.restfulwebservice.user;
 
+import jdk.internal.loader.Resource;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,12 +30,21 @@ public class UserController {
     //사용자 한 명 조회
     //GET /users/1 -> 서버측에는 문자 형태(String)으로 옴 -> int로 자동 변환된다.
     @GetMapping("/users/{id}")
-    public User retrieveUser(@PathVariable int id){
+    public EntityModel<User> retrieveUser(@PathVariable int id){
         User user = service.findOne(id);
         if(user == null) {
             throw new UserNotFoundException(String.format("ID[%s] not found", id));
         }
-        return user;
+        
+        // HATEOAS
+        EntityModel<User> model = new EntityModel<>(user);
+        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder
+                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
+
+        model.add(linkTo.withRel("all-users"));
+        //"_links" : { "all-user" : { "href" : "retrieveAllUsers url" } }
+
+        return model;
     }
 
     //사용자 생성
