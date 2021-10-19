@@ -8,3 +8,9 @@ Loggin:
 spring:
   messages:
     basename : messages
+
+management:
+  enpoints:
+    web:
+      exposure:
+        include: "*"
