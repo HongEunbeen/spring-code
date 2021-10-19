@@ -1,0 +1,22 @@
+server:
+  port: 8088
+
+Loggin:
+  level:
+    org.springframework : DEBUG
+
+spring:
+  jpa:
+    show-sql: true
+  messages:
+    basename : messages
+  security:
+    user:
+      name: username
+      password: passw0rd
+
+management:
+  enpoints:
+    web:
+      exposure:
+        include: "*"
